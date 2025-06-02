@@ -97,7 +97,7 @@ const AllTeachersOfClass = () => {
               }}
             >
               <Avatar
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                src="https://th.bing.com/th/id/OIP.8gzuZP7CrElihtJeFkuLYQHaHa?rs=1&pid=ImgDetMain"
                 alt={teacher.fullName}
                 sx={{ width: 120, height: 120, mb: 3 }}
               />

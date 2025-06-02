@@ -16,9 +16,9 @@ import {
 } from "../../components";
 import {
   DownloadOutlined,
-  Email,
-  PersonAdd,
-  PointOfSale,
+  Groups,
+  School,
+  MonetizationOn,
   Traffic,
 } from "@mui/icons-material";
 import { tokens } from "../../theme";
@@ -30,10 +30,11 @@ function Dashboard() {
   const isXlDevices = useMediaQuery("(min-width: 1260px)");
   const isMdDevices = useMediaQuery("(min-width: 724px)");
   const isXsDevices = useMediaQuery("(max-width: 436px)");
+
   return (
     <Box m="20px">
       <Box display="flex" justifyContent="space-between">
-        <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
+        <Header title="ADMIN DASHBOARD" subtitle="Welcome, Class Owner!" />
         {!isXsDevices && (
           <Box>
             <Button
@@ -80,12 +81,12 @@ function Dashboard() {
           justifyContent="center"
         >
           <StatBox
-            title="11,361"
-            subtitle="Email Sent"
+            title="220"
+            subtitle="Total Students"
             progress="0.75"
-            increase="+14%"
+            increase="+12 this month"
             icon={
-              <Email
+              <Groups
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -99,12 +100,12 @@ function Dashboard() {
           justifyContent="center"
         >
           <StatBox
-            title="431,225"
-            subtitle="Sales Obtained"
-            progress="0.50"
-            increase="+21%"
+            title="12"
+            subtitle="Total Teachers"
+            progress="1"
+            increase="+2 new"
             icon={
-              <PointOfSale
+              <School
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -118,12 +119,12 @@ function Dashboard() {
           justifyContent="center"
         >
           <StatBox
-            title="32,441"
-            subtitle="New Clients"
-            progress="0.30"
-            increase="+5%"
+            title="₹1,25,000"
+            subtitle="Fees Collected"
+            progress="0.60"
+            increase="+₹10k"
             icon={
-              <PersonAdd
+              <MonetizationOn
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
               />
             }
@@ -137,10 +138,10 @@ function Dashboard() {
           justifyContent="center"
         >
           <StatBox
-            title="1,325,134"
-            subtitle="Traffic Received"
-            progress="0.80"
-            increase="+43%"
+            title="4,321"
+            subtitle="Platform Activity"
+            progress="0.90"
+            increase="+15%"
             icon={
               <Traffic
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -151,11 +152,9 @@ function Dashboard() {
 
         {/* ---------------- Row 2 ---------------- */}
 
-        {/* Line Chart */}
+        {/* Line Chart - Attendance Overview */}
         <Box
-          gridColumn={
-            isXlDevices ? "span 8" : isMdDevices ? "span 6" : "span 3"
-          }
+          gridColumn={isXlDevices ? "span 8" : isMdDevices ? "span 6" : "span 3"}
           gridRow="span 2"
           bgcolor={colors.primary[400]}
         >
@@ -171,14 +170,14 @@ function Dashboard() {
                 fontWeight="600"
                 color={colors.gray[100]}
               >
-                Revenue Generated
+                Attendance Overview
               </Typography>
               <Typography
                 variant="h5"
                 fontWeight="bold"
                 color={colors.greenAccent[500]}
               >
-                $59,342.32
+                Monthly Summary
               </Typography>
             </Box>
             <IconButton>
@@ -192,7 +191,7 @@ function Dashboard() {
           </Box>
         </Box>
 
-        {/* Transaction Data */}
+        {/* Recent Admissions */}
         <Box
           gridColumn={isXlDevices ? "span 4" : "span 3"}
           gridRow="span 2"
@@ -201,11 +200,11 @@ function Dashboard() {
         >
           <Box borderBottom={`4px solid ${colors.primary[500]}`} p="15px">
             <Typography color={colors.gray[100]} variant="h5" fontWeight="600">
-              Recent Transactions
+              Recent Admissions
             </Typography>
           </Box>
 
-          {mockTransactions.map((transaction, index) => (
+          {mockTransactions.slice(0, 6).map((transaction, index) => (
             <Box
               key={`${transaction.txId}-${index}`}
               display="flex"
@@ -234,13 +233,13 @@ function Dashboard() {
                 p="5px 10px"
                 borderRadius="4px"
               >
-                ${transaction.cost}
+                ₹{transaction.cost}
               </Box>
             </Box>
           ))}
         </Box>
 
-        {/* Revenue Details */}
+        {/* Revenue Progress */}
         <Box
           gridColumn={isXlDevices ? "span 4" : "span 3"}
           gridRow="span 2"
@@ -248,7 +247,7 @@ function Dashboard() {
           p="30px"
         >
           <Typography variant="h5" fontWeight="600">
-            Campaign
+            Fee Collection Progress
           </Typography>
           <Box
             display="flex"
@@ -263,15 +262,15 @@ function Dashboard() {
               color={colors.greenAccent[500]}
               sx={{ mt: "15px" }}
             >
-              $48,352 revenue generated
+              ₹1,25,000 collected
             </Typography>
             <Typography textAlign="center">
-              Includes extra misc expenditures and costs
+              Compared to ₹2,00,000 expected
             </Typography>
           </Box>
         </Box>
 
-        {/* Bar Chart */}
+        {/* Bar Chart - Fee Overview */}
         <Box
           gridColumn={isXlDevices ? "span 4" : "span 3"}
           gridRow="span 2"
@@ -282,7 +281,7 @@ function Dashboard() {
             fontWeight="600"
             sx={{ p: "30px 30px 0 30px" }}
           >
-            Sales Quantity
+            Monthly Fee Collection
           </Typography>
           <Box
             display="flex"
@@ -295,7 +294,7 @@ function Dashboard() {
           </Box>
         </Box>
 
-        {/* Geography Chart */}
+        {/* Geo Chart - Student Distribution */}
         <Box
           gridColumn={isXlDevices ? "span 4" : "span 3"}
           gridRow="span 2"
@@ -303,7 +302,7 @@ function Dashboard() {
           padding="30px"
         >
           <Typography variant="h5" fontWeight="600" mb="15px">
-            Geography Based Traffic
+            Student Location Spread
           </Typography>
           <Box
             display="flex"

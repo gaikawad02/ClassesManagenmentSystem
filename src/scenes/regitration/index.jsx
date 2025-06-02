@@ -29,11 +29,10 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 
-
-const MotionPaper = motion(Paper);
 const MotionBox = motion(Box);
+const MotionPaper = motion(Paper);
 
-const standards = Array.from({ length: 12 }, (_, i) => `${i + 1}${["st","nd","rd"][i]||"th"}`);
+const standards = Array.from({ length: 12 }, (_, i) => `${i + 1}${["st", "nd", "rd"][i] || "th"}`);
 
 const validationSchema = Yup.object({
   ownerName: Yup.string().required("Owner Name is required"),
@@ -49,20 +48,21 @@ const validationSchema = Yup.object({
     .max(new Date().getFullYear(), "Future?")
     .required("Year is required"),
   fromStandard: Yup.string().required("Select one"),
-  toStandard: Yup.string().required("Select one")
-    .test("gte","Must be ≥ From",function(val){
+  toStandard: Yup.string()
+    .required("Select one")
+    .test("gte", "Must be ≥ From", function (val) {
       return standards.indexOf(val) >= standards.indexOf(this.parent.fromStandard);
     }),
-  password: Yup.string().min(6,"Min 6 chars").required("Password"),
+  password: Yup.string().min(6, "Min 6 chars").required("Password"),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"),null],"Must match")
+    .oneOf([Yup.ref("password"), null], "Must match")
     .required("Confirm"),
   address: Yup.string().required("Address is required"),
 });
 
 export default function Register() {
   const theme = useTheme();
-  const mobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [loading, setLoading] = useState(false);
 
   const formik = useFormik({
@@ -84,11 +84,9 @@ export default function Register() {
       try {
         setLoading(true);
         const res = await axios.post("http://localhost:5197/api/Auth/register", vals);
-        console.log("Registered Successfully:", res.data);
         alert("Class Registered!");
         formik.resetForm();
       } catch (err) {
-        console.error(err.response?.data || err.message);
         alert("Registration Failed!");
       } finally {
         setLoading(false);
@@ -96,11 +94,28 @@ export default function Register() {
     },
   });
 
+  const renderField = (name, label, icon, type = "text") => (
+    <TextField
+      fullWidth
+      type={type}
+      name={name}
+      label={label}
+      value={formik.values[name]}
+      onChange={formik.handleChange}
+      onBlur={formik.handleBlur}
+      error={formik.touched[name] && Boolean(formik.errors[name])}
+      helperText={formik.touched[name] && formik.errors[name]}
+      InputProps={{
+        startAdornment: <InputAdornment position="start">{icon}</InputAdornment>,
+      }}
+    />
+  );
+
   return (
     <Box
       sx={{
         minHeight: "100vh",
-        bgcolor: "#f0f2f5",
+        bgcolor: "#fdfdfd",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -108,227 +123,158 @@ export default function Register() {
       }}
     >
       <MotionPaper
+        elevation={6}
         sx={{
-          backdropFilter: "blur(12px)",
-          background: "rgba(255,255,255,0.7)",
           display: "flex",
-          flexDirection: mobile ? "column" : "row",
-          borderRadius: 4,
-          overflow: "hidden",
-          maxWidth: 900,
+          flexDirection: isMobile ? "column" : "row",
+          maxWidth: 1100,
           width: "100%",
+          borderRadius: 5,
+          overflow: "hidden",
         }}
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Accent Panel */}
+        {/* Left Panel */}
         <Box
           sx={{
             flex: 1,
-            background: "linear-gradient(135deg,#FDC830 0%,#F37335 100%)",
-            color: "#000",
+            background: "linear-gradient(135deg,#2193b0,#6dd5ed)",
+            color: "#fff",
+            p: 4,
             display: "flex",
-            alignItems: "center",
+            flexDirection: "column",
             justifyContent: "center",
-            p: 3,
           }}
         >
-          <Typography
-            variant={mobile ? "h5" : "h4"}
-            fontWeight="bold"
-            textAlign="center"
-          >
-            Join Your Coaching Journey!
+          <Typography variant={isMobile ? "h5" : "h4"} fontWeight="bold" gutterBottom>
+            Welcome to Coaching Hub
+          </Typography>
+          <Typography variant="subtitle1">
+            Start your coaching class with the right tools. Register now and grow smarter!
           </Typography>
         </Box>
 
-        {/* Form Panel */}
-        <Box
-          component={motion.div}
-          initial={{ x: 30, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-          flex={2}
-          p={4}
-        >
-          <Typography variant="h5" mb={3} fontWeight="600" color="textPrimary">
-            Register Your Class
-            <IconButton
-              size="small"
-              onClick={() => formik.resetForm()}
-              sx={{ ml: 1 }}
-            >
-              <RefreshIcon />
-            </IconButton>
-          </Typography>
+        {/* Right Panel */}
+        <Box sx={{ flex: 2, p: 4 }}>
+          <Box
+            component="form"
+            onSubmit={formik.handleSubmit}
+            noValidate
+            sx={{ width: "100%" }}
+          >
+            <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+              <Typography variant="h5" fontWeight="bold">
+                Register Your Class
+              </Typography>
+              <IconButton onClick={() => formik.resetForm()}>
+                <RefreshIcon />
+              </IconButton>
+            </Box>
 
-          <Box component="form" onSubmit={formik.handleSubmit}>
             <Grid container spacing={2}>
-              {[ 
-                { name: "ownerName", label: "Owner Name", icon: <PersonIcon /> },
-                { name: "coachingName", label: "Coaching Name", icon: <HomeIcon /> },
-                { name: "slogan", label: "Slogan", icon: <MessageIcon /> },
-                { name: "email", label: "Email", icon: <EmailIcon /> },
-                { name: "phone", label: "Phone Number", icon: <PhoneIcon /> },
-                {
-                  name: "establishedYear",
-                  label: "Established Year",
-                  icon: <CalendarIcon />,
-                  type: "number",
-                },
-              ].map((f, i) => (
-                <Grid item xs={12} sm={6} key={f.name}>
-                  <MotionBox
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: i * 0.1 }}
-                  >
-                    <TextField
-                      fullWidth
-                      name={f.name}
-                      label={f.label}
-                      type={f.type || "text"}
-                      value={formik.values[f.name]}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      error={formik.touched[f.name] && Boolean(formik.errors[f.name])}
-                      helperText={formik.touched[f.name] && formik.errors[f.name]}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">{f.icon}</InputAdornment>
-                        ),
-                      }}
-                    />
-                  </MotionBox>
-                </Grid>
-              ))}
+              <Grid item xs={12} sm={6}>
+                {renderField("ownerName", "Owner Name", <PersonIcon />)}
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                {renderField("coachingName", "Coaching Name", <HomeIcon />)}
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                {renderField("slogan", "Slogan", <MessageIcon />)}
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                {renderField("email", "Email", <EmailIcon />, "email")}
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                {renderField("phone", "Phone Number", <PhoneIcon />, "tel")}
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                {renderField("establishedYear", "Established Year", <CalendarIcon />, "number")}
+              </Grid>
 
-              {/* Wider Standard Fields */}
+              {/* From and To Standard */}
               {["fromStandard", "toStandard"].map((field, idx) => (
-                <Grid item xs={6} sm={6} key={field}>
-                  <MotionBox
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.7 + idx * 0.1 }}
-                  >
-                    <TextField
-                      select
-                      fullWidth
-                      name={field}
-                      label={field === "fromStandard" ? "From Std" : "To Std"}
-                      value={formik.values[field]}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      error={formik.touched[field] && Boolean(formik.errors[field])}
-                      helperText={formik.touched[field] && formik.errors[field]}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SchoolIcon />
-                          </InputAdornment>
-                        ),
-                      }}
-                    >
-                      {standards.map((o) => (
-                        <MenuItem key={o} value={o}>
-                          {o}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </MotionBox>
-                </Grid>
-              ))}
-
-              {/* Password Fields Side by Side */}
-              {[ 
-                { name: "password", label: "Password" },
-                { name: "confirmPassword", label: "Confirm Password" },
-              ].map((f, i) => (
-                <Grid item xs={6} sm={6} key={f.name}>
-                  <MotionBox
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.9 + i * 0.1 }}
-                  >
-                    <TextField
-                      fullWidth
-                      type="password"
-                      name={f.name}
-                      label={f.label}
-                      value={formik.values[f.name]}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      error={formik.touched[f.name] && Boolean(formik.errors[f.name])}
-                      helperText={formik.touched[f.name] && formik.errors[f.name]}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LockIcon />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </MotionBox>
-                </Grid>
-              ))}
-
-              {/* Address */}
-              <Grid item xs={12}>
-                <MotionBox
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 1.1 }}
-                >
+                <Grid item xs={12} sm={6} key={field}>
                   <TextField
+                    select
                     fullWidth
-                    multiline
-                    rows={3}
-                    name="address"
-                    label="Address"
-                    value={formik.values.address}
+                    name={field}
+                    label={field === "fromStandard" ? "From Std" : "To Std"}
+                    value={formik.values[field]}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    error={formik.touched.address && Boolean(formik.errors.address)}
-                    helperText={formik.touched.address && formik.errors.address}
+                    error={formik.touched[field] && Boolean(formik.errors[field])}
+                    helperText={formik.touched[field] && formik.errors[field]}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <HomeIcon />
+                          <SchoolIcon />
                         </InputAdornment>
                       ),
                     }}
-                  />
-                </MotionBox>
+                  >
+                    {standards.map((std) => (
+                      <MenuItem key={std} value={std}>
+                        {std}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              ))}
+
+              {/* Password Fields */}
+              <Grid item xs={12} sm={6}>
+                {renderField("password", "Password", <LockIcon />, "password")}
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                {renderField("confirmPassword", "Confirm Password", <LockIcon />, "password")}
+              </Grid>
+
+              {/* Address */}
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={3}
+                  name="address"
+                  label="Address"
+                  value={formik.values.address}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.address && Boolean(formik.errors.address)}
+                  helperText={formik.touched.address && formik.errors.address}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <HomeIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
               </Grid>
             </Grid>
 
+            {/* Submit */}
             <Box mt={4} textAlign="center">
-              <MotionBox
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 1.3, duration: 0.4 }}
-                display="inline-block"
+              <Button
+                type="submit"
+                size="large"
+                sx={{
+                  px: 5,
+                  py: 1.5,
+                  background: "linear-gradient(90deg,#2193b0,#6dd5ed)",
+                  color: "#fff",
+                  fontWeight: 600,
+                  borderRadius: 4,
+                  textTransform: "none",
+                  boxShadow: "0 4px 14px rgba(33,147,176,0.4)",
+                  ":hover": { boxShadow: "0 6px 20px rgba(33,147,176,0.6)" },
+                }}
+                disabled={loading}
               >
-                <Button
-                  type="submit"
-                  size="large"
-                  sx={{
-                    px: 5,
-                    py: 1.8,
-                    background: "linear-gradient(90deg,#FDC830,#F37335)",
-                    color: "black",
-                    fontWeight: 600,
-                    borderRadius: 3,
-                    textTransform: "none",
-                    boxShadow: "0 4px 14px rgba(253,200,48,0.5)",
-                    ":hover": { boxShadow: "0 6px 20px rgba(253,200,48,0.7)" },
-                  }}
-                  disabled={loading}
-                >
-                  {loading ? <CircularProgress size={25} /> : "Register"}
-                </Button>
-              </MotionBox>
+                {loading ? <CircularProgress size={24} sx={{ color: "white" }} /> : "Register"}
+              </Button>
             </Box>
           </Box>
         </Box>

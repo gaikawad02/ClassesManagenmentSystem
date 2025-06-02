@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import LoginImg from "../../assets/images/books-img.png"; // Correct path here
+import LoginImg from "../../assets/images/books-img.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -40,7 +40,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(endpointMap[role], values);
-      const token = response.data.token; // ✅ Correct this
+      const token = response.data.token;
 
       localStorage.setItem("token", token);
 
@@ -48,14 +48,9 @@ const Login = () => {
       const userRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
       const classUniqueId = decoded.ClassUniqueId;
 
-      console.log("Role:", userRole);
-      console.log("ClassUniqueId:", classUniqueId);
-
-      // Store if needed
       localStorage.setItem("classUniqueId", classUniqueId);
       localStorage.setItem("role", response.data.userRole);
 
-      // Role-based navigation
       if (userRole === "Admin") {
         navigate("/dashboard");
       } else if (userRole === "Teacher") {
@@ -74,7 +69,6 @@ const Login = () => {
       setSubmitting(false);
     }
   };
-
 
   const renderForm = () => (
     <AnimatePresence mode="wait">
@@ -131,11 +125,11 @@ const Login = () => {
                 fullWidth
                 disabled={isSubmitting || loading}
                 sx={{
-                  background: "linear-gradient(90deg, #FDC830, #F37335)",
+                  background: "linear-gradient(90deg, #1E3C72, #2A5298)",
                   color: "#fff",
                   fontWeight: "bold",
                   "&:hover": {
-                    background: "linear-gradient(90deg, #FBB03B, #F15A29)",
+                    background: "linear-gradient(90deg, #2A5298, #1E3C72)",
                   },
                   display: "flex",
                   justifyContent: "center",
@@ -148,7 +142,7 @@ const Login = () => {
 
               <Typography variant="body2" align="center" sx={{ color: "black" }}>
                 Don't have an account?{" "}
-                <Link to="/register" style={{ color: "#F37335" }}>
+                <Link to="/regitration" style={{ color: "#2A5298", fontWeight: 600 }}>
                   Register
                 </Link>
               </Typography>
@@ -204,12 +198,12 @@ const Login = () => {
                 variant={role === r ? "contained" : "outlined"}
                 onClick={() => setRole(r)}
                 sx={{
-                  background: role === r ? "linear-gradient(90deg, #FDC830, #F37335)" : "",
+                  background: role === r ? "linear-gradient(90deg, #1E3C72, #2A5298)" : "",
                   color: role === r ? "#fff" : "black",
                   fontWeight: "bold",
-                  borderColor: "#F37335",
+                  borderColor: "#2A5298",
                   "&:hover": {
-                    background: "linear-gradient(90deg, #FBB03B, #F15A29)",
+                    background: "linear-gradient(90deg, #2A5298, #1E3C72)",
                     color: "#fff",
                   },
                 }}

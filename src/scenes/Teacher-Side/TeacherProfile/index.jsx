@@ -90,7 +90,7 @@ export default function TeacherProfile() {
         {/* Avatar + Basic Info */}
         <Box display="flex" flexDirection="column" alignItems="center" mb={4}>
           <Avatar
-            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+            src="https://th.bing.com/th/id/OIP.8gzuZP7CrElihtJeFkuLYQHaHa?rs=1&pid=ImgDetMain"
             alt={teacherData.fullName}
             sx={{ width: 160, height: 160, mb: 2 }}
           />
